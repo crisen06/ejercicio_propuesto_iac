@@ -18,24 +18,22 @@ data "azurerm_resource_group" "utec_rg" {
   name = var.resource_group_name
 }
 
-# VNet con CIDR dinámico: 10.[student_id].0.0/16
-resource "azurerm_virtual_network" "vnet_utec" {
-  name                = "vnet-utec-${var.student_name}"
-  address_space       = ["${var.vnet_cidr_base}.${var.student_id}.0.0/16"]
+
+resource "azurerm_redis_cache" "redis" {
+  name                = "redis-utec-${var.student_name}"
   location            = data.azurerm_resource_group.utec_rg.location
   resource_group_name = data.azurerm_resource_group.utec_rg.name
+  capacity            = 1
+  family              = "C"     # C = Basic/Standard, P = Premium
+  sku_name            = "Basic" # Basic | Standard | Premium
 
+  enable_non_ssl_port = false
+  minimum_tls_version = "1.2"
+
+  redis_configuration {}
   tags = {
     Entorno = "Laboratorio"
     Curso   = "Arquitectura Multinube"
     Alumno  = var.student_name
   }
-}
-
-# Subnet con CIDR dinámico: 10.[student_id].1.0/24
-resource "azurerm_subnet" "subnet_privada" {
-  name                 = "snet-privada-${var.student_name}"
-  resource_group_name  = data.azurerm_resource_group.utec_rg.name
-  virtual_network_name = azurerm_virtual_network.vnet_utec.name
-  address_prefixes     = ["${var.vnet_cidr_base}.${var.student_id}.1.0/24"]
 }
