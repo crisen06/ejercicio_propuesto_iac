@@ -12,9 +12,3 @@ variable "resource_group_name" {
   description = "Nombre del Resource Group asignado al alumno"
   type        = string
 }
-
-variable "vnet_cidr_base" {
-  description = "Base del bloque CIDR de la VNet"
-  type        = string
-  default     = "10"
-}
